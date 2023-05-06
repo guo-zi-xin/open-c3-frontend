@@ -1,9 +1,9 @@
 <template>
-  <Drawer v-bind="$attrs" :title="title" :loading="loading"  @close="cancel" width="800px">
+  <Drawer v-bind="$attrs" :title="title" :loading="loading" @close="cancel" width="800px">
     <template #content>
-      <p>{{ treeData?.parent }}</p>
-      <el-divider class="costv-divider mt16 mb16"/>
-      <base-form ref="form" :config="config.form" :params="params">
+      <!-- <p>{{ treeData?.parent }}</p>
+      <el-divider class="costv-divider mt16 mb16"/> -->
+      <base-form class="mt16 mb16" ref="form" :config="config.form" :params="params">
         <template #btn>
           <el-button type="primary">{{ $t('globalVariableSettings') }}</el-button>
         </template>
@@ -13,38 +13,39 @@
           {{ $t('globalVariableParameters') }}
         </template>
         <Table :thead="tableConfig.thead" :data="tableConfig.list" :tableLoading="tableConfig.loading">
-          <template #name="{row}">
-            <el-input v-model="row.name"/>
+          <template #name="{ row }">
+            <el-input v-model="row.name" />
           </template>
-          <template #value="{row}">
-            <el-input v-model="row.value"/>
+          <template #value="{ row }">
+            <el-input v-model="row.value" />
           </template>
-          <template #describe="{row}">
-            <el-input v-model="row.describe"/>
+          <template #describe="{ row }">
+            <el-input v-model="row.describe" />
           </template>
-          <template #option="{row}">
-            <el-input v-model="row.option"/>
+          <template #option="{ row }">
+            <el-input v-model="row.option" />
           </template>
-          <template #operate="{index}">
+          <template #operate="{ index }">
             <el-button @click="del(index)" link type="primary">{{ $t('delete') }}</el-button>
           </template>
         </Table>
         <el-button @click="add" type="primary" link class="mt10">{{ $t('add') }}</el-button>
       </el-card>
       <p>
-        <el-button link type="primary">{{ $t('addScriptStep') }}</el-button>
-        <el-button link type="primary">{{ $t('addFileStep') }}</el-button>
-        <el-button link type="primary">{{ $t('addApprovalStep') }}</el-button>
+        <el-button link type="primary" @click="handleAddScp">{{ $t('addScriptStep') }}</el-button>
+        <el-button link type="primary" @click="handleAddFile">{{ $t('addFileStep') }}</el-button>
+        <el-button link type="primary" @click="handleAddApproval">{{ $t('addApprovalStep') }}</el-button>
       </p>
+
     </template>
     <template #footer>
       <el-button>12</el-button>
     </template>
   </Drawer>
-  <script-step v-if="scriptStepFlag" v-model="scriptStepFlag"/>
+  <script-step v-if="scriptStepFlag" v-model="scriptStepFlag" />
 </template>
 <script lang="ts">
-import { reactive, toRefs, onMounted, watch, getCurrentInstance, computed } from 'vue'
+import { defineComponent, reactive, toRefs, onMounted, watch, getCurrentInstance, computed } from 'vue'
 import store from '@/store'
 import Drawer from '@/components/drawer/index.vue'
 import baseForm from '@/components/baseForm/index.vue'
@@ -53,7 +54,7 @@ import scriptStep from '@/views/business/job/components/scriptStep.vue'
 import { ADD_CONFIG, VARIABLE_THEAD_CONFIG } from '../config'
 import { addCollector } from '@/api/monitor/config'
 
-export default {
+export default defineComponent({
   components: { Drawer, baseForm, Table, scriptStep },
   emits: ['cancel', 'addSuccess'],
   props: {
@@ -62,7 +63,7 @@ export default {
       default: null
     }
   },
-  setup (prop, context) {
+  setup(prop, context) {
     const { proxy } = getCurrentInstance()
     const treeData = computed(() => {
       return store.getters.treeData
@@ -80,32 +81,53 @@ export default {
       config: ADD_CONFIG,
       loading: false,
       tableConfig: {
-        obj: {name: '', value: '', describe: '', option: '' },
+        obj: { name: '', value: '', describe: '', option: '' },
         thead: VARIABLE_THEAD_CONFIG,
-        list: [{name: '', value: '', describe: '', option: '' }],
+        list: [{ name: '', value: '', describe: '', option: '' }],
         loading: false
       },
-      scriptStepFlag: true
+      scriptStepFlag: false
     })
+
     const add = () => {
       state.tableConfig.list.push(JSON.parse(JSON.stringify(state.tableConfig.obj)))
     }
+
     const del = (index: number) => {
       state.tableConfig.list.splice(index, 1)
     }
+
+    // 添加脚本步骤
+    const handleAddScp = () => {
+
+    }
+
+    // 添加分发文件步骤
+    const handleAddFile = () => {
+
+    }
+
+    // 添加审批步骤
+    const handleAddApproval = () => {
+
+    }
+
     watch(() => state.params.type, (newVal, oldVal) => {
     }, {
       immediate: true
     })
+
     watch(() => state.params.subtype, (newVal, oldVal) => {
     }, {
       immediate: true
     })
+
     watch(() => prop.info, (newVal, oldVal) => {
     }, {
       immediate: true,
       deep: true
     })
+
     onMounted(() => {
     })
     const cancel = () => { // 关闭弹框
@@ -130,10 +152,12 @@ export default {
       confirm,
       treeData,
       add,
-      del
+      del,
+      handleAddScp,
+      handleAddFile,
+      handleAddApproval
     }
   }
-}
+})
 </script>
-<style lang="scss">
-</style>
+<style lang="scss"></style>
